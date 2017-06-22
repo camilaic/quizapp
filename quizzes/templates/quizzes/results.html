@@ -1,0 +1,10 @@
+<h1>{{ question.name }}</h1>
+
+<ul>
+{% for choice in question.choice_set.all %}
+    {#    change name variable choice.choice#}
+    <li>{{ choice.choice_text }} -- {{ choice.answer }} answer{{ choice.answer|pluralize }}</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'quizzes:detail' quiz.id %}">Another quiz?</a>
