@@ -39,3 +39,6 @@ class UserAnswer(models.Model):
 
     class Meta:
         unique_together = ('user_answer', 'user', 'quiz_attempt_id')
+
+    def __str__(self):
+        return str(self.user)
