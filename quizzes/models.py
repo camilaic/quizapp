@@ -27,8 +27,6 @@ class Choice(models.Model):
     question = models.ForeignKey(Question)
     choice_text = models.CharField(max_length=200)  # choice text
     is_correct = models.BooleanField(default=False)
-    # is_correct = models.BooleanField(db_column='answer', default=False)
-    # db_column: allows to make the migration later
 
     def __str__(self):
         return self.choice_text
@@ -38,7 +36,6 @@ class UserAnswer(models.Model):
     user_answer = models.ForeignKey(Choice)
     user = models.ForeignKey(User)
     quiz_attempt_id = models.IntegerField(null=False, default=0)
-    # max_length is defined as 36 because the uuid length is 36
 
     class Meta:
         unique_together = ('user_answer', 'user', 'quiz_attempt_id')

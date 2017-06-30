@@ -21,10 +21,9 @@ class DetailView(generic.DetailView):
     model = Quiz
     template_name = 'quizzes/detail.html'
     context_object_name = 'quiz'  # context
-    # should I would increment the attempt here?
-    # when displaying the questions or should be incremented when the user submits the question??
 
 
+# displays the results (correct and user answer, and overall score)
 class ResultsView(generic.DetailView):
     model = Quiz
     template_name = 'quizzes/results.html'
@@ -35,33 +34,36 @@ class ResultsView(generic.DetailView):
 
         # get the correct choice marked as is_correct=True
         correct_choice = Choice.objects.filter(question__quiz=kwargs['object'], is_correct=True)
-        # get all the user attempts
-        all_attempt_answers = UserAnswer.objects.filter(
-            user=self.request.user, user_answer__in=Choice.objects.filter(question__quiz=kwargs['object']))
 
-        # get the maximum value where the id is equal to quiz_attempt_id and return the id of the quiz_attempt_id that
-        # has the highest value
+        # get all the user attempts: get the result of filtering user_answer in Choice, which has the returned
+        # resulted of the filter question in quiz that has 'key' 'object' ({'object': <Quiz: quiz2>})
+        all_attempt_answers = UserAnswer.objects.filter(
+            user=self.request.user, user_answer__in=Choice.objects.filter(
+                question__quiz=kwargs['object']))
+        all_attempt_answers.order_by('quiz_attempt_id')
+
+        # get the maximum value where the id is equal to quiz_attempt_id and return the id of the quiz_attempt_id
+        # that has the highest value
         latest_attempt_id = all_attempt_answers.aggregate(Max('quiz_attempt_id'))['quiz_attempt_id__max']
 
         # send the last attempt to the template under the user_answer variable
-        # context['user_answer'] = all_attempt_answers.filter(quiz_attempt_id=latest_attempt_id)
         attempt_answer = all_attempt_answers.filter(quiz_attempt_id=latest_attempt_id)
 
-        # iterating through correct_choice and attempt_answer and comparing
+        # iterating through correct_choice and attempt_answer and checking if the values matched
+        # order_by to order the answers and questions. Without it, the result is wrong
         # if they match, correct_guesses is incremented
-        for choice, user_answer in zip(correct_choice, attempt_answer):
+        for choice, user_answer in zip(correct_choice.order_by('question_id'),
+                                       attempt_answer.order_by('user_answer__question_id')):
             if choice.choice_text == user_answer.user_answer.choice_text:
                 correct_guesses += 1
 
         context['user_answer'] = attempt_answer
         context['correct_guesses'] = correct_guesses
 
-        # correct_choice = UserAnswer.objects.filter(
-        #     user=self.request.user, quiz_attempt_id=latest_attempt_id,
-        #     user_answer__in=Choice.objects.filter(question__quiz=kwargs['object'], is_correct=True))
         return context
 
-    # save the user answer and show the next question
+
+# save the user answer and show the next question
 def answer(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
     user = request.user
@@ -83,8 +85,6 @@ def answer(request, quiz_id):
 
             # iterating through selected_choices to get the user's choice and saving into the table UserAnswer
             # the choice can be linked back to the question
-
-            # increment here and saving it into the database??
             for choice in selected_choices:
                 UserAnswer(user_answer=choice, user=request.user, quiz_attempt_id=current_attempt_id).save()
 
