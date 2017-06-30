@@ -1,10 +1,26 @@
-<h1>{{ question.name }}</h1>
+<h1>{{ quiz.name }}</h1>
 
 <ul>
-{% for choice in question.choice_set.all %}
-    {#    change name variable choice.choice#}
-    <li>{{ choice.choice_text }} -- {{ choice.answer }} answer{{ choice.answer|pluralize }}</li>
-{% endfor %}
-</ul>
+    {# displays the question #}
+    {% for question in quiz.question_set.all %}
+        <p id="question{{ forloop.counter }}"><b>{{ question.question }}</b></p>
 
-<a href="{% url 'quizzes:detail' quiz.id %}">Another quiz?</a>
+        {# displaying the correct answer #}
+        {% for choice in question.choice_set.all %}
+            {% if choice.is_correct == True %}
+                <li><b>Correct answer:</b> {{ choice.choice_text }}</li>
+            {% endif %}
+        {% endfor %}
+            <br />
+        {# looping through the user_answer and getting the question_id that is equal to the id #}
+        {% for answer in user_answer %}
+            {% if answer.user_answer.question_id == question.id %}
+                <li><b>Your answer:</b> {{ answer.user_answer.choice_text }}</li>
+            {% endif %}
+        {% endfor %}
+        <hr style="margin-right:50px">
+    {% endfor %}
+</ul>
+<h3 style="margin-left: 30px">Overall score: {{ correct_guesses }} of {{ quiz.question_set.count }} question{{quiz.question_set.count|pluralize}}</h3>
+
+<a href="{% url 'quizzes:detail' quiz.id %}">Try again?</a>

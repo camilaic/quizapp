@@ -1,18 +1,21 @@
 <h1>{{ quiz.name }}</h1>
 
+{# if there is this key, then show the error_message #}
 {%  if error_message %}
     <p><strong>{{ error_message }}</strong></p>
 {% endif %}
 
-<form action="{% url 'quizzes:answer' quiz.id %}" method="post">
+<form action="{% url 'quizzes:answer' quiz_id=quiz.id %}" method="post">
     {% csrf_token %}
     {% for question in quiz.question_set.all %}
+        <p id="question{{ forloop.counter }}">{{ question.question }}</p>
         {% for choice in question.choice_set.all %}
-            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+            <input type="checkbox" name="question{{ question.id }}" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
             <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
         {% endfor %}
     {% endfor %}
-
+    <br/>
     <input type="submit" value="Answer" />
-
 </form>
+
+{#<QueryDict: {'csrfmiddlewaretoken': ['VpIS7xZIMYPZVobPaI85g8StIk5eMU9pI0tDeIORzeoGM9snlZ2mkTcG9XlnNqkm'], 'question2': ['9']}>#}

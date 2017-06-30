@@ -1,11 +1,13 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.db.models import Max
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import generic
 
-from .models import Choice, Quiz
+from .models import Choice, Quiz, UserAnswer
 
 
+# displays list of quizzes
 class IndexView(generic.ListView):
     template_name = 'quizzes/index.html'
     context_object_name = 'quiz_list'
@@ -13,52 +15,103 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return Quiz.objects.order_by('?')
 
-# def index(request):
-#     # order randomly
-#     quiz_list = Quiz.objects.order_by('?')
-#     context = {
-#         'quiz_list': quiz_list,
-#     }
-#
-#     # quiz = get_object_or_404(models.Quiz, pk=quiz_id)
-#     return render(request, 'quizzes/index.html', context)
 
-
+# displays questions
 class DetailView(generic.DetailView):
     model = Quiz
     template_name = 'quizzes/detail.html'
-    context_object_name = 'quiz'
-
-# def detail(request, quiz_id):
-#         question = get_object_or_404(Quiz, pk=quiz_id)
-#         return render(request, 'quizzes/detail.html', {'question': question})
+    context_object_name = 'quiz'  # context
+    # should I would increment the attempt here?
+    # when displaying the questions or should be incremented when the user submits the question??
 
 
 class ResultsView(generic.DetailView):
     model = Quiz
     template_name = 'quizzes/results.html'
 
+    def get_context_data(self, **kwargs):
+        correct_guesses = 0
+        context = super(ResultsView, self).get_context_data(**kwargs)
 
-# def results(request, quiz_id):
-#     question = get_object_or_404(Quiz, pk=quiz_id)
-#     return render(request, 'quizzes/results.html', {'question': question})
-#     # response = "Results of quiz %s."
-#     # return HttpResponse(response, quiz_id)
+        # get the correct choice marked as is_correct=True
+        correct_choice = Choice.objects.filter(question__quiz=kwargs['object'], is_correct=True)
+        # get all the user attempts
+        all_attempt_answers = UserAnswer.objects.filter(
+            user=self.request.user, user_answer__in=Choice.objects.filter(question__quiz=kwargs['object']))
 
+        # get the maximum value where the id is equal to quiz_attempt_id and return the id of the quiz_attempt_id that
+        # has the highest value
+        latest_attempt_id = all_attempt_answers.aggregate(Max('quiz_attempt_id'))['quiz_attempt_id__max']
 
+        # send the last attempt to the template under the user_answer variable
+        # context['user_answer'] = all_attempt_answers.filter(quiz_attempt_id=latest_attempt_id)
+        attempt_answer = all_attempt_answers.filter(quiz_attempt_id=latest_attempt_id)
+
+        # iterating through correct_choice and attempt_answer and comparing
+        # if they match, correct_guesses is incremented
+        for choice, user_answer in zip(correct_choice, attempt_answer):
+            if choice.choice_text == user_answer.user_answer.choice_text:
+                correct_guesses += 1
+
+        context['user_answer'] = attempt_answer
+        context['correct_guesses'] = correct_guesses
+
+        # correct_choice = UserAnswer.objects.filter(
+        #     user=self.request.user, quiz_attempt_id=latest_attempt_id,
+        #     user_answer__in=Choice.objects.filter(question__quiz=kwargs['object'], is_correct=True))
+        return context
+
+    # save the user answer and show the next question
 def answer(request, quiz_id):
-    question = get_object_or_404(Quiz, pk=quiz_id)
+    quiz = get_object_or_404(Quiz, pk=quiz_id)
+    user = request.user
+
+    previous_choices = UserAnswer.objects.filter(user=user, user_answer__in=Choice.objects.filter(question__quiz=quiz))
+    previous_attempt_id = previous_choices.aggregate(Max('quiz_attempt_id'))['quiz_attempt_id__max'] or 0
+    current_attempt_id = previous_attempt_id+1
+
+    # calling the function, passing the dictionary from the form
+    question_id_to_chosen_answers_ids = get_questions_and_answer(request.POST)
 
     try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except(KeyError, Choice.DoesNotExist):
-        # redisplay the question
-        return render(request, 'quizzes/detail.html', {
-            'question': question,
-            'error_message': "Select an answer.",
-        })
-    else:
-        selected_choice.answer += 1
-        selected_choice.save()
+        # get selected_questions that matches the key
+        selected_questions = quiz.question_set.filter(pk__in=question_id_to_chosen_answers_ids.keys())
 
-        return HttpResponseRedirect(reverse('quizzes:results', args=(quiz_id,)))
+        # iterating through the selected_question to get the selected choice and get the question pk
+        for question in selected_questions:
+            selected_choices = question.choice_set.filter(pk__in=question_id_to_chosen_answers_ids[question.pk])
+
+            # iterating through selected_choices to get the user's choice and saving into the table UserAnswer
+            # the choice can be linked back to the question
+
+            # increment here and saving it into the database??
+            for choice in selected_choices:
+                UserAnswer(user_answer=choice, user=request.user, quiz_attempt_id=current_attempt_id).save()
+
+    except(KeyError, Choice.DoesNotExist):
+        # redisplay the questions if the choice was empty
+        # redirect to the same template detail.html, thus, it is necessary to send the context = quiz
+        return render(request, 'quizzes/detail.html', {
+            # before I was passing the wrong context: 'question'
+            'quiz': quiz,
+            'error_message': "Select an answer.",
+            })
+
+    return HttpResponseRedirect(reverse('quizzes:results', args=(quiz_id,)))
+
+
+# it will get the keys and values from the dictionary from the form, handling it and saving to a temp_dict
+def get_questions_and_answer(post_data):
+    temp_dict = {}
+
+    # before, it was post_data.items()
+    for key, value in post_data.lists():
+        # matches the key
+        if key.startswith('question'):
+            # remove the 'question' from the key
+            question_id = int(key[8:])
+
+            # adding the key and value (for example: [2:8])
+            temp_dict[question_id] = value
+
+    return temp_dict
