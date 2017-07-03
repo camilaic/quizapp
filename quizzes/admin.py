@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Choice, Quiz, Question, UserAnswer
+from .models import Choice, Quiz, Question, UserAnswer, User
 
 
 # displays in a table format: TabularInLine
@@ -18,7 +18,8 @@ class QuestionAdmin(admin.ModelAdmin):
 
 
 class UserAnswerAdmin(admin.ModelAdmin):
-    fields = ['user', 'quiz_attempt_id', 'user_answer']
+    list_display = ('user', 'quiz_attempt_id', 'user_answer')
+
 
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Quiz)

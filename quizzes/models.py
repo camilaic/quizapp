@@ -37,6 +37,7 @@ class UserAnswer(models.Model):
     user = models.ForeignKey(User)
     quiz_attempt_id = models.IntegerField(null=False, default=0)
 
+    # unique mixed fields
     class Meta:
         unique_together = ('user_answer', 'user', 'quiz_attempt_id')
 
