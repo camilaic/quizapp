@@ -1,5 +1,5 @@
 Quiz application
-*****************
+=============
 
 Assignment project
 
