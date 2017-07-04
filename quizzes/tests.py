@@ -12,9 +12,7 @@ class QuestionModelTestCase(TestCase):
         self.assertEqual(obj.name, 'QuizTest')
 
         
-class UserAnswerModelTestCase(TestCase):
-    def setUp(self):
-        UserAnswer.objects.create(user_answer='Good', user='AnonymousUser', quiz_attempt_id='10')
+
 
 
 
