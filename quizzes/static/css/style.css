@@ -1,0 +1,127 @@
+body{
+    font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
+    margin: 15px;
+}
+
+header {
+    margin-top: 10px;
+    width: 100%;
+    height: 40px;
+    border-bottom: 2px solid #761DFF;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2em;
+    font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
+    color: #17AA1C;
+}
+
+/*detail.html - post the answers*/
+form {
+    margin-top: 10px;
+    line-height: 150%;
+}
+
+/* unvisited link */
+a:link {
+    color: #313131;
+}
+
+/* visited link */
+a:visited {
+    color: #1272CB;
+}
+
+/* mouse over link */
+a:hover {
+    color: #0D4F91;
+}
+
+button:hover {
+    background-color: #3E8E41;
+}
+
+/*list of quizzes to redirect to questions*/
+.index_link_to_questions {
+    list-style-type: square;
+    margin-top: 10px;
+    margin-left: 20px;
+    line-height: 150%;
+}
+
+h2.quiz_name {
+    font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
+    color: #17AA1C;
+    margin-top: 10px;
+}
+
+
+.question_name {
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.btn_submit {
+    background-color: #159D1A;
+    color: #FFFFFF;
+    padding: 10px 16px;
+    font-size: 0.8em;
+    border: none;
+    border-radius: 3px;
+}
+
+.btn_submit:hover {
+    background-color: #3E8E41;
+}
+
+/*results.html - display results */
+.results_list {
+    margin-top: 10px;
+    line-height: 150%;
+}
+
+.correct_choice {
+    font-style: italic;
+}
+
+.user_answer {
+    color: #0D4F91;
+}
+
+.result_overall_score {
+    color: #761DFF;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.btn_try_again {
+    background-color: #4cb94f;
+    color: #FFFFFF;
+    padding: 10px 16px;
+    font-size: 0.8em;
+    border: none;
+    border-radius: 3px;
+    margin-right: 5px;
+    width: 100px;
+}
+
+.btn_go_home {
+    background-color: #159D1A;
+    color: #FFFFFF;
+    padding: 10px 16px;
+    font-size: 0.8em;
+    border: none;
+    border-radius: 3px;
+    width: 100px;
+}
+
+hr.separator_questions {
+	border-top: 1px dashed #dad9d9;
+    margin-right: 80%;
+}
+
+.invalid_question {
+    border: 1px solid red;
+}

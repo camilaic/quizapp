@@ -1,27 +1,34 @@
 {% extends 'quizzes/base.html' %}
+{% load static %}
 
 {% block content %}
 
-    <h1>{{ quiz.name }}</h1>
+    <h2 class="quiz_name">{{ quiz.name }}</h2>
 
     {# if there is this key, then show the error_message #}
     {%  if error_message %}
         <p><strong>{{ error_message }}</strong></p>
     {% endif %}
 
-    <form action="{% url 'quizzes:answer' quiz_id=quiz.id %}" method="post">
+    <form action="{% url 'quizzes:answer' quiz_id=quiz.id %}" method="post" class="quiz_form">
         {% csrf_token %}
         {% for question in quiz.question_set.all %}
-            <p id="question{{ forloop.counter }}">{{ question.question }}</p>
-            {% for choice in question.choice_set.all %}
-                <input type="radio" name="question{{ question.id }}" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
+            <div class="question">
+                <p id="question{{ forloop.counter }}" class="question_name">{{ question.question }}</p>
+                {% for choice in question.choice_set.all %}
+                    <input class="answer" type="radio" name="question{{ question.id }}" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }} </label><br />
             {% endfor %}
+            </div>
         {% endfor %}
         <br/>
-        <input type="submit" value="Answer" />
+        <input type="submit" value="Answer" class="btn_submit"/>
     </form>
 
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static "js/validation.js" %}"></script>
 {% endblock %}
 
 

@@ -3,7 +3,7 @@
 {% block content %}
 
     {% if quiz_list %}
-        <ul>
+        <ul class="index_link_to_questions">
         {% for quiz in quiz_list %}
             <li><a href="{% url 'quizzes:detail' quiz.id %}">{{ quiz.name }}</a></li>
         {% endfor %}

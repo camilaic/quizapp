@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.db.models import Max
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -64,6 +65,7 @@ class ResultsView(generic.DetailView):
 
 
 # save the user answer and show the next question
+@login_required
 def answer(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
     user = request.user
