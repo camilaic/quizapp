@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.db.models import Max
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -25,6 +24,7 @@ class DetailView(generic.DetailView):
 
 
 # displays the results (correct and user answer, and overall score)
+
 class ResultsView(generic.DetailView):
     model = Quiz
     template_name = 'quizzes/results.html'
@@ -37,7 +37,7 @@ class ResultsView(generic.DetailView):
         correct_choice = Choice.objects.filter(question__quiz=kwargs['object'], is_correct=True)
 
         # get all the user attempts: get the result of filtering user_answer in Choice, which has the returned
-        # resulted of the filter question in quiz that has 'key' 'object' ({'object': <Quiz: quiz2>})
+        # result of the filter question in quiz that has 'key' 'object' ({'object': <Quiz: quiz2>})
         all_attempt_answers = UserAnswer.objects.filter(
             user=self.request.user, user_answer__in=Choice.objects.filter(
                 question__quiz=kwargs['object']))
@@ -65,7 +65,6 @@ class ResultsView(generic.DetailView):
 
 
 # save the user answer and show the next question
-@login_required
 def answer(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
     user = request.user

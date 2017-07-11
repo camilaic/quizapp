@@ -1,3 +1,4 @@
+from django.db.utils import IntegrityError
 from django.test import TestCase
 from .models import Quiz, Question, Choice, User, UserAnswer
 
@@ -40,6 +41,15 @@ class ChoiceModelTestCase(TestCase):
         query = Choice.objects.filter(choice_text='Bad')
         self.assertEqual(query.count(), 1)
 
+    # testing for duplicate answers
+    # it fails because of the unique
+    # def test_duplicate_choices(self):
+    #     question = Question.objects.get(question='How are you')
+    #     Choice.objects.create(question=question, choice_text='Good', is_correct=False)
+    #
+    #     Choice.objects.filter(choice_text='Good')
+    #     self.assertRaises(IntegrityError)
+
 
 class UserAnswerTestCase(TestCase):
     def setUp(self):
@@ -47,17 +57,12 @@ class UserAnswerTestCase(TestCase):
         question = Question.objects.create(question='How are you', quiz=quiz)
         choice = Choice.objects.create(question=question, choice_text='Bad', is_correct=True)
         user = User.objects.create(username='camila', email='admin@mail.com', is_staff=True)
-        # user_2 = User.objects.create(username='test', email='test @mail.com', is_staff=True)
         UserAnswer.objects.create(user_answer=choice, user=user, quiz_attempt_id=1)
-        # user2 = UserAnswer.objects.create(user_answer=choice, user=user_2, quiz_attempt_id=1)
 
     # testing if the user points to the user choice and asserting that is equal to 'Bad'
     def test_user_answer(self):
         obj = UserAnswer.objects.get(user__username='camila')
         self.assertEqual(obj.user_answer.choice_text, 'Bad')
-
-    # test for uniqueness - unique_together = ('user_answer', 'user', 'quiz_attempt_id')
-    # def test_uniqueness(self):
 
 
 
