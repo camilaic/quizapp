@@ -10,10 +10,6 @@ function removeClass(element, className) {
     }
 }
 
-function saveQuestions(element) {
-
-}
-
 // add a listener to the form
 quizForm.addEventListener('submit', function (event) {
     // not allow the default action - submit - to happen
@@ -28,9 +24,10 @@ quizForm.addEventListener('submit', function (event) {
     for (var i = 0; i < questionContainers.length; i++) {
         var questionContainer = questionContainers[i];
 
-        var questions = questionContainer.querySelectorAll('.question_name');
-        // list_questions.push(questionContainer.querySelectorAll('.question_name'));
+        // adding to a list to use the questions in script.js
+        list_questions.push(questionContainer.querySelectorAll('.question_name'));
 
+        //getting the answers
         var answers = questionContainer.querySelectorAll('.answer');
         var currentQuestionAnswered = false;
 
@@ -63,7 +60,10 @@ quizForm.addEventListener('submit', function (event) {
     var form_elements = event.target.elements;
     var user_choices = [];
     // get the keys from the form that starts with question
-    var question_keys = Object.keys(form_elements).filter(function(key) {return key.startsWith('question')});
+    var question_keys = Object.keys(form_elements).filter(function(key) {
+        return key.startsWith('question')
+    });
+
     //looping and saving the user answer into the user_choices list
     //user_answer must match the user_answer field from serializer = UserAnswerSerializer
     question_keys.forEach(function(question_key) {

@@ -11,7 +11,7 @@ function addScore(data, numberQuestions) {
     var get_user_score = json_parse["score_correct"];
 
     var getDiv = document.querySelector('.overall_score');
-    getDiv.style.display = 'inline';
+    getDiv.style.display = 'block';
 
     var pluralizeWord = function () {
         if(numberQuestions > 1) {
@@ -26,45 +26,53 @@ function addScore(data, numberQuestions) {
     getDiv.innerHTML = pluralizeWord();
 }
 
+// displaying the results
 function displayAnswers(data, list_questions) {
+    var color_paragraph;
+
+    //parsing the data to a JSON
     var json_parse = JSON.parse(data);
-    var get_user_answers = json_parse["user_answers"];
+    //getting correct choices
     var get_correct_choices = json_parse["correct_choice"];
+    //getting user_answers
+    var get_user_answers = json_parse["user_answers"];
 
-
-
+    //looping through the list_questions to get the question text and displaying it in a div
     for (var i = 0; i < list_questions.length; i++) {
         var question = list_questions[i];
-        console.log(question);
+        var question_text = question[0].innerText;
+
+        var correct_answer = get_correct_choices[question_text];
+        var user_answer = get_user_answers[question_text];
+
+        // if the user answer is correct, the color is green, otherwise it will be red
+        if (user_answer === correct_answer) {
+            color_paragraph = "green"
+        } else {
+            color_paragraph = "red"
+        }
+
+        getElement(question_text, 'black', "question_paragraph");
+        getElement('Correct Answer: '  + correct_answer, 'black', "result");
+        getElement('User Answer: ' + user_answer, color_paragraph, "result");
     }
-
-
-    var getDiv = document.querySelector('.user_answer_result');
-    getDiv.style.display = 'inline';
-    getDiv.innerHTML = 'Hello testing';
-
-
-    // var getParagraph = document.querySelector('.correct_choice_result');
-    // getParagraph.style.display = 'inline';
-    //
-    // // // select all the questions
-    // questionContainers = document.querySelectorAll('.question');
-    // console.log(questionContainers);
-    // // number_questions = questionContainers.length;
-    //
-    // // loop over the questions to get the answers
-    // for (var i = 0; i < questionContainers.length; i++) {
-    //     var questionContainer = questionContainers[i];
-    //     var questions = questionContainer.querySelectorAll('.question_name');
-    //     console.log("Questions: " + questions);
-    //
-    //     for (var j = 0; j < questions.length; j++) {
-    //          var question = questions[j];
-    //          console.log(question);
-    //     }
-    // }
-
 }
 
+// getting the div to display the results
+function getElement(textToDisplay, colorToChange, addClassName) {
+    //displaying the div
+    var getDiv = document.querySelector('.div_result');
+    getDiv.style.display = "block";
 
+    //creating a paragraph element
+    var myContent = document.createElement("p");
+    //adding class name
+    myContent.className = addClassName;
 
+    //setting the color if the user answer is correct or not
+    myContent.style.color = colorToChange;
+
+    //appending the text to display the results
+    myContent.appendChild(document.createTextNode(textToDisplay));
+    getDiv.appendChild(myContent);
+}
