@@ -91,12 +91,12 @@ h2.quiz_name {
     color: #0D4F91;
 }
 
-.result_overall_score {
-    color: #761DFF;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    font-size: 1.5em;
-}
+/*.result_overall_score {*/
+    /*color: #761DFF;*/
+    /*margin-top: 20px;*/
+    /*margin-bottom: 20px;*/
+    /*font-size: 1.5em;*/
+/*}*/
 
 .btn_try_again {
     background-color: #4cb94f;
@@ -106,3 +106,20 @@ h2.quiz_name {
 .invalid_question {
     border: 1px solid red;
 }
+
+.overall_score {
+    display: none;
+    color: #761DFF;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.correct_choice_result {
+    display: none;
+}
+
+.user_answer_result{
+    display: none;
+}
+

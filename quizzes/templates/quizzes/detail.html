@@ -10,8 +10,7 @@
         <p><strong>{{ error_message }}</strong></p>
     {% endif %}
 
-    <form action="{% url 'quizzes:answer' quiz_id=quiz.id %}" method="post" class="quiz_form">
-        {% csrf_token %}
+    <form class="quiz_form">
         {% for question in quiz.question_set.all %}
             <div class="question">
                 <p id="question{{ forloop.counter }}" class="question_name">{{ question.question }}</p>
@@ -29,8 +28,16 @@
         <input type="submit" value="Answer" class="btn_global"/>
     </form>
 
+    <br />
+    <div class = "correct_choice_result"></div>
+    <div class = "user_answer_result"></div>
+    <div class="overall_score">
+    </div>
+
 {% endblock %}
 
 {% block scripts %}
+    <script src="{% static "js/js-cookie.js" %}"></script>
+    <script src="{% static "js/script.js" %}"></script>
     <script src="{% static "js/validation.js" %}"></script>
 {% endblock %}
