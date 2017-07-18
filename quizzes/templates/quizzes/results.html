@@ -15,21 +15,20 @@
                     <li class="correct_choice">Correct answer: {{ choice.choice_text }}</li>
                 {% endif %}
             {% endfor %}
+
             {# looping through the user_answer and getting the question_id that is equal to the id #}
             {% for answer in user_answer %}
                 {% if answer.user_answer.question_id == question.id %}
                     <li class="user_answer">Your answer: {{ answer.user_answer.choice_text }}</li>
                 {% endif %}
             {% endfor %}
+
             <hr class="separator_questions">
         {% endfor %}
     </ul>
     <h3 class="result_overall_score">Overall score: {{ correct_guesses }} of {{ quiz.question_set.count }} question{{quiz.question_set.count|pluralize}}</h3>
 
-    <a href="{% url 'quizzes:detail' quiz.id %}"><button class="btn_try_again">Try again?</button></a>
-    <a href="{% url 'quizzes:index'%}"><button class="btn_go_home">Home</button></a>
+    <a href="{% url 'quizzes:detail' quiz.id %}"><button class="btn_try_again btn_global">Try again?</button></a>
+    <a href="{% url 'quizzes:index'%}"><button class="btn_global">Home</button></a>
 
 {% endblock %}
-
-
-

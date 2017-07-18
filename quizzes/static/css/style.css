@@ -36,10 +36,12 @@ a:visited {
 /* mouse over link */
 a:hover {
     color: #0D4F91;
+    cursor:pointer;
 }
 
-button:hover {
-    background-color: #3E8E41;
+hr.separator_questions {
+	border-top: 1px dashed #dad9d9;
+    margin-right: 80%;
 }
 
 /*list of quizzes to redirect to questions*/
@@ -56,23 +58,23 @@ h2.quiz_name {
     margin-top: 10px;
 }
 
-
 .question_name {
     font-weight: bold;
-    margin-top: 20px;
 }
 
-.btn_submit {
+.btn_global {
     background-color: #159D1A;
     color: #FFFFFF;
     padding: 10px 16px;
     font-size: 0.8em;
     border: none;
     border-radius: 3px;
+    width: 100px;
 }
 
-.btn_submit:hover {
+.btn_global:hover {
     background-color: #3E8E41;
+    cursor:pointer;
 }
 
 /*results.html - display results */
@@ -98,28 +100,7 @@ h2.quiz_name {
 
 .btn_try_again {
     background-color: #4cb94f;
-    color: #FFFFFF;
-    padding: 10px 16px;
-    font-size: 0.8em;
-    border: none;
-    border-radius: 3px;
     margin-right: 5px;
-    width: 100px;
-}
-
-.btn_go_home {
-    background-color: #159D1A;
-    color: #FFFFFF;
-    padding: 10px 16px;
-    font-size: 0.8em;
-    border: none;
-    border-radius: 3px;
-    width: 100px;
-}
-
-hr.separator_questions {
-	border-top: 1px dashed #dad9d9;
-    margin-right: 80%;
 }
 
 .invalid_question {

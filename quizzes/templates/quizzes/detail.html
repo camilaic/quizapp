@@ -15,14 +15,18 @@
         {% for question in quiz.question_set.all %}
             <div class="question">
                 <p id="question{{ forloop.counter }}" class="question_name">{{ question.question }}</p>
+
                 {% for choice in question.choice_set.all %}
-                    <input class="answer" type="radio" name="question{{ question.id }}" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                    <input class="answer" type="radio" name="question{{ question.id }}"
+                           id="choice{{ forloop.counter }}" value="{{ choice.id }}">
                     <label for="choice{{ forloop.counter }}">{{ choice.choice_text }} </label><br />
-            {% endfor %}
+                {% endfor %}
+
+            <br />
             </div>
         {% endfor %}
         <br/>
-        <input type="submit" value="Answer" class="btn_submit"/>
+        <input type="submit" value="Answer" class="btn_global"/>
     </form>
 
 {% endblock %}
@@ -30,5 +34,3 @@
 {% block scripts %}
     <script src="{% static "js/validation.js" %}"></script>
 {% endblock %}
-
-
