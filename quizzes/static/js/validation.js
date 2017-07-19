@@ -2,36 +2,47 @@ var quizForm = document.querySelector('.quiz_form');
 var number_questions;
 var list_questions = [];
 
-// remove the red box around the question that was not answered
+//remove the red box around the question that was not answered
 function removeClass(element, className) {
-    // check if the class contains the class name and if there is a match, remove it
+    //check if the class contains the class name and if there is a match, remove it
     if (element.classList.contains(className)) {
         element.classList.remove(className);
     }
 }
 
+//check if the question already exists in the list
+function addToList(item) {
+    //getting the question_text from the node
+    var questions_text = item[0].innerText;
+
+    //if the question does not exist, add to the list_question
+    if (list_questions.indexOf(questions_text) < 0) {
+        list_questions.push(questions_text);
+    }
+}
 // add a listener to the form
 quizForm.addEventListener('submit', function (event) {
-    // not allow the default action - submit - to happen
+    //not allow the default action - submit - to happen
     event.preventDefault();
     var formValid = true;
 
-    // select all the questions
+    //select all the questions
     var questionContainers = document.querySelectorAll('.question');
     number_questions = questionContainers.length;
 
-    // loop over the questions to get the answers
+    //loop over the questions to get the answers
     for (var i = 0; i < questionContainers.length; i++) {
         var questionContainer = questionContainers[i];
 
-        // adding to a list to use the questions in script.js
-        list_questions.push(questionContainer.querySelectorAll('.question_name'));
+        //getting the questions
+        var questionNode= questionContainer.querySelectorAll('.question_name');
+        addToList(questionNode);
 
         //getting the answers
         var answers = questionContainer.querySelectorAll('.answer');
         var currentQuestionAnswered = false;
 
-        // loop over answers to check if checked is true or false
+        //loop over answers to check if checked is true or false
         for (var j = 0; j < answers.length; j++) {
             var answerSelected = answers[j].checked;
 
@@ -59,7 +70,7 @@ quizForm.addEventListener('submit', function (event) {
     //get the elements from the form
     var form_elements = event.target.elements;
     var user_choices = [];
-    // get the keys from the form that starts with question
+    //get the keys from the form that starts with question
     var question_keys = Object.keys(form_elements).filter(function(key) {
         return key.startsWith('question')
     });
@@ -82,7 +93,7 @@ quizForm.addEventListener('submit', function (event) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            // credentials displays the username
+            //credentials displays the username
             credentials: 'include',
             method: 'POST',
             // send the user_choices list as json
@@ -93,7 +104,7 @@ quizForm.addEventListener('submit', function (event) {
             }
             return response.text()
         }).then(function(data) {
-            addScore(data, number_questions);
+            displayScore(data, number_questions);
             displayAnswers(data, list_questions);
         });
     }

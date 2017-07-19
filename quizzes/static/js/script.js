@@ -1,12 +1,10 @@
-
-
-// remove form from the html
+//remove form from the html
 function removeForm() {
     document.querySelector('.quiz_form').remove();
 }
 
 //display div and the score
-function addScore(data, numberQuestions) {
+function displayScore(data, numberQuestions) {
     var json_parse = JSON.parse(data);
     var get_user_score = json_parse["score_correct"];
 
@@ -26,7 +24,7 @@ function addScore(data, numberQuestions) {
     getDiv.innerHTML = pluralizeWord();
 }
 
-// displaying the results
+//displaying the results
 function displayAnswers(data, list_questions) {
     var color_paragraph;
 
@@ -37,13 +35,13 @@ function displayAnswers(data, list_questions) {
     //getting user_answers
     var get_user_answers = json_parse["user_answers"];
 
-    //looping through the list_questions to get the question text and displaying it in a div
+    //looping through the list_questions to get the question
     for (var i = 0; i < list_questions.length; i++) {
         var question = list_questions[i];
-        var question_text = question[0].innerText;
 
-        var correct_answer = get_correct_choices[question_text];
-        var user_answer = get_user_answers[question_text];
+        //getting the correct_answer and user_answer for each question
+        var correct_answer = get_correct_choices[question];
+        var user_answer = get_user_answers[question];
 
         // if the user answer is correct, the color is green, otherwise it will be red
         if (user_answer === correct_answer) {
@@ -52,13 +50,13 @@ function displayAnswers(data, list_questions) {
             color_paragraph = "red"
         }
 
-        getElement(question_text, 'black', "question_paragraph");
+        getElement(question, 'black', "question_paragraph");
         getElement('Correct Answer: '  + correct_answer, 'black', "result");
         getElement('User Answer: ' + user_answer, color_paragraph, "result");
     }
 }
 
-// getting the div to display the results
+//getting the div to display the results
 function getElement(textToDisplay, colorToChange, addClassName) {
     //displaying the div
     var getDiv = document.querySelector('.div_result');
@@ -66,7 +64,7 @@ function getElement(textToDisplay, colorToChange, addClassName) {
 
     //creating a paragraph element
     var myContent = document.createElement("p");
-    //adding class name
+    //adding class name to be able to use in the css file
     myContent.className = addClassName;
 
     //setting the color if the user answer is correct or not

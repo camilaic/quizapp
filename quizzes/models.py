@@ -27,8 +27,12 @@ class Choice(models.Model):
     # foreignkey: each Choice is related to a single question on the quiz
     question = models.ForeignKey(Question)
     # after testing, unique was added to avoid duplicate answers for a question
-    choice_text = models.CharField(max_length=200, unique=True)
+    choice_text = models.CharField(max_length=200)
     is_correct = models.BooleanField(default=False)
+
+    # a different question can have the a same choice_text but it is unique within a question
+    class Meta:
+        unique_together = ('question', 'choice_text')
 
     def __str__(self):
         return self.choice_text
