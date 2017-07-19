@@ -44,13 +44,14 @@ class ChoiceModelTestCase(TestCase):
         self.assertEqual(query.count(), 1)
 
     # testing for duplicate answers
-    @skip('it fails because of the unique')
+    # @skip('it fails because of the unique')
     def test_duplicate_choices(self):
         question = Question.objects.get(question='How are you')
-        Choice.objects.create(question=question, choice_text='Good', is_correct=False)
-
-        Choice.objects.filter(choice_text='Good')
-        self.assertRaises(IntegrityError)
+        # Choice.objects.create(question=question, choice_text='Good', is_correct=False)
+        # Choice.objects.filter(choice_text='Good')
+        # self.assertRaises(IntegrityError)
+        with self.assertRaises(IntegrityError):
+            Choice.objects.create(question=question, choice_text='Good', is_correct=False)
 
 
 class UserAnswerTestCase(TestCase):

@@ -29,8 +29,6 @@ class TestIndexView(TestCase):
     # verifying if the quiz appears in the list: quiz_list
     def test_questions(self):
         response = self.client.get(reverse('quizzes:index'))
-        # self.assertQuerysetEqual(
-        #     response.context['quiz_list'], ['<Quiz: QuizTest>'])
         obj = Quiz.objects.get(name='QuizTest')
         query = response.context['quiz_list']
         self.assertEqual(query[0], obj)
@@ -42,21 +40,20 @@ class TestDetailView(TestCase):
         quiz = Quiz.objects.create(name='QuizTest')
         question = Question.objects.create(question='Is it raining?', quiz=quiz)
         Choice.objects.create(question=question, choice_text='Yes', is_correct=True)
+        self.choice = Choice.objects.get(choice_text='Yes')
 
     # verifying if choice is returned
     def test_choice(self):
-        choice = Choice.objects.get(choice_text='Yes')
         # args passing the pk
-        url = reverse('quizzes:detail', args=(choice.id,))
+        url = reverse('quizzes:detail', args=(self.choice.id,))
         response = self.client.get(url)
-        self.assertContains(response, choice.choice_text)
+        self.assertContains(response, self.choice.choice_text)
 
     # verifying if the choice points to the correct question
     def test_question(self):
-        choice = Choice.objects.get(choice_text='Yes')
-        url = reverse('quizzes:detail', args=(choice.question.quiz_id,))
+        url = reverse('quizzes:detail', args=(self.choice.question.quiz_id,))
         response = self.client.get(url)
-        self.assertContains(response, choice.question)
+        self.assertContains(response, self.choice.question)
 
 
 # testing the result view which displays how many questions were answered correctly
@@ -66,6 +63,7 @@ class TestResultView(TestCase):
         question = Question.objects.create(question='Is it raining?', quiz=quiz)
         correct_choice = Choice.objects.create(question=question, choice_text='Yes', is_correct=True)
         Choice.objects.create(question=question, choice_text='No', is_correct=False)
+        self.choice = Choice.objects.get(choice_text='Yes')
 
         user = User.objects.create_user(username='camila', password='test123')
         # user answer to test
@@ -73,8 +71,7 @@ class TestResultView(TestCase):
 
     # return correct count for the user answers that are correct
     def test_return_correct_choice(self):
-        choice = Choice.objects.get(choice_text='Yes')
-        url = reverse('quizzes:results', args=(choice.question.quiz_id,))
+        url = reverse('quizzes:results', args=(self.choice.question.quiz_id,))
 
         # to prevent 'AnonymousUser'
         client = Client()
