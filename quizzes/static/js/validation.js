@@ -58,8 +58,11 @@ quizForm.addEventListener('submit', function (event) {
         if (!currentQuestionAnswered) {
             formValid = false;
 
-            //adding a class
-            questionContainer.classList.add('invalid_question');
+            //if a div does nor contains the class name invalid_question, then add the class name
+            if(!questionContainer.classList.contains('invalid_question')) {
+                questionContainer.classList.add('invalid_question');
+                console.log(questionContainer);
+            }
 
         //remove the class by calling the function removeClass
         } else {
@@ -79,7 +82,6 @@ quizForm.addEventListener('submit', function (event) {
     //user_answer must match the user_answer field from serializer = UserAnswerSerializer
     question_keys.forEach(function(question_key) {
         user_choices.push({user_answer: form_elements[question_key].value});
-
     });
 
     //getting the cookie from csrf_token
