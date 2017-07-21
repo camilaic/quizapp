@@ -1,10 +1,10 @@
-from quizzes.api.views import ResultsViewSet
+from quizzes.api.views import UserAnswersViewSet
 from rest_framework import routers
 
 router = routers.SimpleRouter()
-router.register('^results', ResultsViewSet)
+router.register('^user_answers', UserAnswersViewSet)
 # it will generate:
-# ^results/$ : api:useranswer-list
-#  ^results/{pk}/ : api:useranswer-detail
+# ^user_answers/$ : api:useranswer-list
+#  ^user_answers/{pk}/ : api:useranswer-detail
 
 urlpatterns = router.urls

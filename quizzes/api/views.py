@@ -7,14 +7,13 @@ from quizzes import models
 from . import serializers
 
 
-class UserAttemptId:
+class UserAttempt:
 
     def __init__(self):
         self.quiz_id = 0
         self.user = "Anonymous"
         self.current_attempt_id = 0
 
-    # change for a class or stg like moving correct_choice and current-user-answers to remove global
     def generate_user_attempt_id(self, data):
         self.quiz_id = data['user_answer'].question.quiz_id
         self.user = data['user']
@@ -30,23 +29,22 @@ class UserAttemptId:
         return self.current_attempt_id
 
 
-class UserResult(UserAttemptId):
+class UserResult:
 
-    def __init__(self, user_attempt_class):
-        super().__init__()
-        self.quiz_id = user_attempt_class.quiz_id
-        self.user = user_attempt_class.user
-        self.current_attempt_id = user_attempt_class.current_attempt_id
+    def __init__(self, user_attempt):
+        self.quiz_id = user_attempt.quiz_id
+        self.user = user_attempt.user
+        self.current_attempt_id = user_attempt.current_attempt_id
 
     # only the user score
     def user_score(self):
 
-        correct_choice = self.get_correct_choice()
-        current_user_answers = self.get_current_user_answers()
+        correct_choices = self.correct_choice
+        current_user_answers = self.current_user_answers
         correct_guesses = 0
 
         # iterating through correct_choice and current_user_answers and checking if the values matches
-        for choice, current_user_answer in zip(correct_choice.order_by('question_id'),
+        for choice, current_user_answer in zip(correct_choices.order_by('question_id'),
                                                current_user_answers.order_by('user_answer__question_id')):
             if choice.choice_text == current_user_answer.user_answer.choice_text:
                 # if they match, correct_guesses is incremented
@@ -54,22 +52,27 @@ class UserResult(UserAttemptId):
 
         return correct_guesses
 
-    def get_correct_choice(self):
+    @property
+    def correct_choice(self):
         # getting the correct choice marked as is_correct=True
-        correct_choice = models.Choice.objects.filter(question__quiz_id=self.quiz_id, is_correct=True)
+        correct_choice = models.Choice.objects.filter(question__quiz_id=self.quiz_id,
+                                                      is_correct=True
+                                                      ).select_related('question__quiz')
 
         return correct_choice
 
-    def get_current_user_answers(self):
-        # getting the user_answer that matches the current_attempt_id
+    @property
+    def current_user_answers(self):
         current_user_answers = models.UserAnswer.objects.filter(user=self.user,
                                                                 user_answer__question__quiz_id=self.quiz_id,
-                                                                quiz_attempt_id=self.current_attempt_id)
+                                                                quiz_attempt_id=self.current_attempt_id
+                                                                ).select_related('user_answer__question')
 
         return current_user_answers
 
-    def question_and_user_answers(self):
-        current_user_answers = self.get_current_user_answers()
+    # iterate through the returned list from current_user_answer and save them into a dictionary
+    def question_and_user_answers_to_dict(self):
+        current_user_answers = self.current_user_answers
         answer_and_questions_dict = {}
 
         # getting the current question and user answer
@@ -82,9 +85,10 @@ class UserResult(UserAttemptId):
 
         return answer_and_questions_dict
 
-    def correct_choice(self):
+    # iterate through the returned list from correct_choice property and save them into a dictionary
+    def correct_choice_to_dict(self):
         choices_and_questions_dict = {}
-        correct_choice = self.get_correct_choice()
+        correct_choice = self.correct_choice
 
         # getting the correct choice marked as is_correct=True
         for current_choice in correct_choice:
@@ -97,9 +101,10 @@ class UserResult(UserAttemptId):
         return choices_and_questions_dict
 
 
-class ResultsViewSet(ModelViewSet):
+# ResultsViewSet is specific
+class UserAnswersViewSet(ModelViewSet):
 
-    user_attempt_id = UserAttemptId()
+    user_attempt = UserAttempt()
 
     # getting all the objects from UserAnswer model
     queryset = models.UserAnswer.objects.all()
@@ -116,10 +121,12 @@ class ResultsViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+        user_result = UserResult(self.user_attempt)
+
         data = {
-            "score_correct": UserResult(self.user_attempt_id).user_score(),
-            "user_answers": UserResult(self.user_attempt_id).question_and_user_answers(),
-            "correct_choice": UserResult(self.user_attempt_id).correct_choice()
+            "score_correct": user_result.user_score(),
+            "user_answers": user_result.question_and_user_answers_to_dict(),
+            "correct_choice": user_result.correct_choice_to_dict()
         }
 
         return Response(data, status=status.HTTP_201_CREATED, headers=headers)
@@ -128,5 +135,5 @@ class ResultsViewSet(ModelViewSet):
         # looping through the serializer to add the user username
         for data in serializer.validated_data:
             data['user'] = self.request.user
-            data['quiz_attempt_id'] = self.user_attempt_id.generate_user_attempt_id(data)
+            data['quiz_attempt_id'] = self.user_attempt.generate_user_attempt_id(data)
         super().perform_create(serializer)

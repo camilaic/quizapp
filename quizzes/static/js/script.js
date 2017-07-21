@@ -50,14 +50,14 @@ function displayAnswers(data, list_questions) {
             color_paragraph = "red"
         }
 
-        getElement(question, 'black', "question_paragraph");
-        getElement('Correct Answer: '  + correct_answer, 'black', "result");
-        getElement('User Answer: ' + user_answer, color_paragraph, "result");
+        createElementAndDisplay(question, 'black', "question_paragraph");
+        createElementAndDisplay('Correct Answer: '  + correct_answer, 'black', "result");
+        createElementAndDisplay('User Answer: ' + user_answer, color_paragraph, "result");
     }
 }
 
-//getting the div to display the results
-function getElement(textToDisplay, colorToChange, addClassName) {
+//displays div as block and add a paragraph to display the results
+function createElementAndDisplay(textToDisplay, colorToChange, addClassName) {
     //displaying the div
     var getDiv = document.querySelector('.div_result');
     getDiv.style.display = "block";

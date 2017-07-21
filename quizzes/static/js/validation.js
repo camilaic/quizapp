@@ -16,7 +16,8 @@ function addToList(item) {
     var questions_text = item[0].innerText;
 
     //if the question does not exist, add to the list_question
-    if (list_questions.indexOf(questions_text) < 0) {
+    //better indexOf() === -1, instead indexOf() < 0
+    if (list_questions.indexOf(questions_text) === -1) {
         list_questions.push(questions_text);
     }
 }
@@ -89,7 +90,7 @@ quizForm.addEventListener('submit', function (event) {
 
     // if the form is valid, then submit the user's answers
     if (formValid) {
-        fetch('/api/results/', {
+        fetch('/api/user_answers/', {
             headers: {
                 'X-CSRFToken': csrf_token,
                 'Accept': 'application/json',
