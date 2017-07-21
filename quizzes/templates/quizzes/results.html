@@ -1,26 +1,34 @@
-<h1>{{ quiz.name }}</h1>
+{% extends 'quizzes/base.html' %}
 
-<ul>
-    {# displays the question #}
-    {% for question in quiz.question_set.all %}
-        <p id="question{{ forloop.counter }}"><b>{{ question.question }}</b></p>
+{% block content %}
 
-        {# displaying the correct answer #}
-        {% for choice in question.choice_set.all %}
-            {% if choice.is_correct == True %}
-                <li><b>Correct answer:</b> {{ choice.choice_text }}</li>
-            {% endif %}
+    <h2 class="quiz_name">{{ quiz.name }}</h2>
+
+    <ul class="results_list">
+        {# displays the question #}
+        {% for question in quiz.question_set.all %}
+            <p id="question{{ forloop.counter }}" class="question_name"><b>{{ question.question }}</b></p>
+
+            {# displaying the correct answer #}
+            {% for choice in question.choice_set.all %}
+                {% if choice.is_correct == True %}
+                    <li class="correct_choice">Correct answer: {{ choice.choice_text }}</li>
+                {% endif %}
+            {% endfor %}
+
+            {# looping through the user_answer and getting the question_id that is equal to the id #}
+            {% for answer in user_answer %}
+                {% if answer.user_answer.question_id == question.id %}
+                    <li class="user_answer">Your answer: {{ answer.user_answer.choice_text }}</li>
+                {% endif %}
+            {% endfor %}
+
+            <hr class="separator_questions">
         {% endfor %}
-            <br />
-        {# looping through the user_answer and getting the question_id that is equal to the id #}
-        {% for answer in user_answer %}
-            {% if answer.user_answer.question_id == question.id %}
-                <li><b>Your answer:</b> {{ answer.user_answer.choice_text }}</li>
-            {% endif %}
-        {% endfor %}
-        <hr style="margin-right:50px">
-    {% endfor %}
-</ul>
-<h3 style="margin-left: 30px">Overall score: {{ correct_guesses }} of {{ quiz.question_set.count }} question{{quiz.question_set.count|pluralize}}</h3>
+    </ul>
+    <h3 class="result_overall_score">Overall score: {{ correct_guesses }} of {{ quiz.question_set.count }} question{{quiz.question_set.count|pluralize}}</h3>
 
-<a href="{% url 'quizzes:detail' quiz.id %}">Try again?</a>
+    <a href="{% url 'quizzes:detail' quiz.id %}"><button class="btn_try_again btn_global">Try again?</button></a>
+    <a href="{% url 'quizzes:index'%}"><button class="btn_global">Home</button></a>
+
+{% endblock %}

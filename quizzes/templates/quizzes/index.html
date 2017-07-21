@@ -1,9 +1,16 @@
-{% if quiz_list %}
-    <ul>
-    {% for quiz in quiz_list %}
-        <li><a href="{% url 'quizzes:detail' quiz.id %}">{{ quiz.name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No quizzes are available.</p>
-{% endif %}
+{% extends 'quizzes/base.html' %}
+
+{% block content %}
+
+    {% if quiz_list %}
+        <ul class="index_link_to_questions">
+        {% for quiz in quiz_list %}
+            <li><a href="{% url 'quizzes:detail' quiz.id %}">{{ quiz.name }}</a></li>
+        {% endfor %}
+        </ul>
+
+    {% else %}
+        <p>No quizzes are available.</p>
+    {% endif %}
+
+{% endblock %}

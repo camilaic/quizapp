@@ -13,7 +13,7 @@ class IndexView(generic.ListView):
     context_object_name = 'quiz_list'
 
     def get_queryset(self):
-        return Quiz.objects.order_by('?')
+        return Quiz.objects.order_by('name')
 
 
 # displays questions
@@ -24,6 +24,7 @@ class DetailView(generic.DetailView):
 
 
 # displays the results (correct and user answer, and overall score)
+
 class ResultsView(generic.DetailView):
     model = Quiz
     template_name = 'quizzes/results.html'
@@ -36,7 +37,7 @@ class ResultsView(generic.DetailView):
         correct_choice = Choice.objects.filter(question__quiz=kwargs['object'], is_correct=True)
 
         # get all the user attempts: get the result of filtering user_answer in Choice, which has the returned
-        # resulted of the filter question in quiz that has 'key' 'object' ({'object': <Quiz: quiz2>})
+        # result of the filter question in quiz that has 'key' 'object' ({'object': <Quiz: quiz2>})
         all_attempt_answers = UserAnswer.objects.filter(
             user=self.request.user, user_answer__in=Choice.objects.filter(
                 question__quiz=kwargs['object']))
