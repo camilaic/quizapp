@@ -13,7 +13,7 @@ class IndexView(generic.ListView):
     context_object_name = 'quiz_list'
 
     def get_queryset(self):
-        return Quiz.objects.order_by('?')
+        return Quiz.objects.order_by('name')
 
 
 # displays questions

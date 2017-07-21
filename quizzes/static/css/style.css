@@ -1,6 +1,7 @@
 body{
     font-family: Open Sans,Helvetica Neue,Helvetica,Arial,sans-serif;
     margin: 15px;
+    background-color: #F4F4F4;
 }
 
 header {
@@ -91,13 +92,6 @@ h2.quiz_name {
     color: #0D4F91;
 }
 
-.result_overall_score {
-    color: #761DFF;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    font-size: 1.5em;
-}
-
 .btn_try_again {
     background-color: #4cb94f;
     margin-right: 5px;
@@ -105,4 +99,27 @@ h2.quiz_name {
 
 .invalid_question {
     border: 1px solid red;
+}
+
+.div_to_hide {
+    display: none;
+    margin-bottom: 10px;
+}
+.overall_score {
+    color: #761DFF;
+    margin-top: 30px;
+    font-size: 1.5em;
+}
+
+.div_result {
+    margin-top: 5px;
+}
+
+.question_paragraph {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.result{
+    margin-top: 5px;
 }

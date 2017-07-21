@@ -10,16 +10,15 @@
         <p><strong>{{ error_message }}</strong></p>
     {% endif %}
 
-    <form action="{% url 'quizzes:answer' quiz_id=quiz.id %}" method="post" class="quiz_form">
-        {% csrf_token %}
+    <form class="quiz_form">
         {% for question in quiz.question_set.all %}
             <div class="question">
                 <p id="question{{ forloop.counter }}" class="question_name">{{ question.question }}</p>
 
                 {% for choice in question.choice_set.all %}
                     <input class="answer" type="radio" name="question{{ question.id }}"
-                           id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-                    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }} </label><br />
+                           id="choice{{ choice.id }}" value="{{ choice.id }}">
+                    <label for="choice{{ choice.id }}">{{ choice.choice_text }} </label><br />
                 {% endfor %}
 
             <br />
@@ -29,8 +28,15 @@
         <input type="submit" value="Answer" class="btn_global"/>
     </form>
 
+    <br />
+    <div class = "div_result div_to_hide"></div>
+    <div class="overall_score div_to_hide">
+    </div>
+
 {% endblock %}
 
 {% block scripts %}
+     <script src="{% static "js/script.js" %}"></script>
+    <script src="{% static "js/js-cookie.js" %}"></script>
     <script src="{% static "js/validation.js" %}"></script>
 {% endblock %}
